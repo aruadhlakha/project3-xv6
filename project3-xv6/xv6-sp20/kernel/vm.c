@@ -306,8 +306,9 @@ copyuvm(pde_t *pgdir, uint sz)
 
   if((d = setupkvm()) == 0)
     return 0;
+
   for(i = 0; i < sz; i += PGSIZE){
-    if((pte = walkpgdir(pgdir, (void*)i, 0)) == 0)
+    if((pte=walkpgdir(pgdir, (void*)i, 0)) == 0)
       panic("copyuvm: pte should exist");
     if(!(*pte & PTE_P))
       panic("copyuvm: page not present");
@@ -315,8 +316,17 @@ copyuvm(pde_t *pgdir, uint sz)
     if((mem = kalloc()) == 0)
       goto bad;
     memmove(mem, (char*)pa, PGSIZE);
-    if(mappages(d, (void*)i, PGSIZE, PADDR(mem), PTE_W|PTE_U) < 0)
-      goto bad;
+    
+    if (!(*pte & PTE_W)){
+    	    if(mappages(d, (void*)i, PGSIZE, PADDR(*pte), PTE_U) < 0){
+      			goto bad;
+	    }
+    }
+    else {
+	    if (mappages (d, (void*)i, PGSIZE, PADDR(mem), PTE_W|PTE_U)<0){
+		    goto bad;
+	    }
+    }
   }
   return d;
 
@@ -362,7 +372,7 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
     buf += n;
     va = va0 + PGSIZE;
   }
-  return 0;
+  return 1;
 }
 
 int mprotect(void *addr, int len){
@@ -372,21 +382,19 @@ int mprotect(void *addr, int len){
 	}
 	pte_t *pte;
 	pte = walkpgdir(proc->pgdir, (void*)va, 0);
-	if (pte != 0){
-		for (int i=0;i<((len)*PGSIZE+va);i+=PGSIZE){
-			if ((*pte &PTE_P)==0)
-				return -1;
-			if ((*pte & PTE_U)==0)
-				return -1;
-			if (walkpgdir(proc->pgdir, (void*)i, 0) == 0) {
+	if (pte){
+		for (int i=va;i<(len*PGSIZE+va);i+=PGSIZE){
+			if ((pte=walkpgdir(proc->pgdir, (void*)i,0))==0)
+				return-1;
+			if ((*pte &PTE_U)==0 || (*pte & PTE_P)==0)
 				return -1;
 			}
-		}
-		for (int j = va; j<((len)*PGSIZE+va); j+=PGSIZE){
+		
+		for (int j = va; j<(len*PGSIZE+va); j+=PGSIZE){
 			pte= walkpgdir(proc->pgdir, (void*)j,0);
 			*pte=PADDR(*pte)&(~PTE_W);
-		}
-	}
+		}	
+}
 	lcr3(PADDR(proc->pgdir));
 	return 0;
 }
@@ -398,23 +406,18 @@ int munprotect (void *addr, int len){
 	}
 	pte_t *pte;
 	pte = walkpgdir(proc->pgdir, (void*)va, 0);
-	if (pte != 0){
-		for (int i=0;i<((len)*PGSIZE+va); i += PGSIZE){
-			if ((*pte &PTE_P)==0)
+	if (pte){
+		for (int i=va;i<((len)*PGSIZE+va); i += PGSIZE){
+			if ((pte=walkpgdir(proc->pgdir, (void*)i,0))==0)
 				return -1;
-			if ((*pte & PTE_U)==0)
-				return -1;
-			if (walkpgdir(proc->pgdir, (void*)i, 0) == 0) {
-				return -1;
+			if ((*pte &PTE_U)==0 || (*pte & PTE_P)==0)
+                                return -1;
 			}
-		}
-		for (int j = va; j<((len)*PGSIZE+va); j+= PGSIZE){
+		
+		for (int j = va; j<(len*PGSIZE+va); j+= PGSIZE){
 		pte=walkpgdir (proc->pgdir, (void*)j,0);
 		*pte=PADDR(*pte) | (PTE_W);
 		}
-
-
-
 	}
 	lcr3(PADDR(proc->pgdir));
 	return 0;

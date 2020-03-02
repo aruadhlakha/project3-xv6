@@ -230,15 +230,15 @@ ld  -m    elf_i386 -nostdlib --omagic \
 dd if=/dev/zero of=xv6.img count=10000
 10000+0 records in
 10000+0 records out
-5120000 bytes (5.1 MB, 4.9 MiB) copied, 0.0190203 s, 269 MB/s
+5120000 bytes (5.1 MB, 4.9 MiB) copied, 0.0199276 s, 257 MB/s
 dd if=kernel/bootblock of=xv6.img conv=notrunc
 1+0 records in
 1+0 records out
-512 bytes copied, 3.445e-05 s, 14.9 MB/s
+512 bytes copied, 6.6679e-05 s, 7.7 MB/s
 dd if=kernel/kernel of=xv6.img seek=1 conv=notrunc
 256+1 records in
 256+1 records out
-131496 bytes (131 kB, 128 KiB) copied, 0.000416206 s, 316 MB/s
+131508 bytes (132 kB, 128 KiB) copied, 0.000624479 s, 211 MB/s
 gcc -c  -iquote include -Wall -Werror -ggdb  -o tools/mkfs.o tools/mkfs.c
 gcc  tools/mkfs.o -o tools/mkfs
 mkdir -p fs
@@ -298,23 +298,23 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/zombie fs/zombie
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ln
 usertests
-kill
-grep
-mkdir
-rm
-zombie
-cat
-wc
-ls
-tester
-README
 forktest
-sh
-echo
+cat
+zombie
+ln
+README
 stressfs
+mkdir
+kill
+echo
+rm
+wc
+sh
+grep
 init
+tester
+ls
 balloc: first 407 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/ls user/bin/stressfs user/bin/grep user/bin/sh user/bin/tester user/bin/kill user/bin/cat user/bin/mkdir user/bin/init user/bin/rm user/bin/echo user/bin/ln user/bin/usertests user/bin/wc user/bin/zombie
@@ -341,23 +341,23 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ln
 usertests
-kill
-grep
-mkdir
-rm
-zombie
-cat
-wc
-ls
-tester
-README
 forktest
-sh
-echo
+cat
+zombie
+ln
+README
 stressfs
+mkdir
+kill
+echo
+rm
+wc
+sh
+grep
 init
+tester
+ls
 balloc: first 409 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -380,6 +380,7 @@ pid 4 tester: trap 14 err 7 on cpu 0 eip 0xb9 addr 0x2000--kill proc
 write to an unprotected page
 TEST PASSED
 
+
 test mprotect_basic PASSED (5 of 5)
  (check whether mprotect work properly)
 
@@ -401,23 +402,23 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ln
 usertests
-kill
-grep
-mkdir
-rm
-zombie
-cat
-wc
-ls
-tester
-README
 forktest
-sh
-echo
+cat
+zombie
+ln
+README
 stressfs
+mkdir
+kill
+echo
+rm
+wc
+sh
+grep
 init
+tester
+ls
 balloc: first 408 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -436,13 +437,12 @@ init: starting sh
 $ tester
 tester
 write to protected page in the child
-Error : write to a protected page in the child process but fail to trigger page fault
-TEST FAILED
+pid 4 tester: trap 14 err 7 on cpu 0 eip 0xb9 addr 0x2000--kill proc
+TEST PASSED
 
 
-test mprotect_fork FAILED (0 of 5)
+test mprotect_fork PASSED (5 of 5)
  (check whether fork inherit the write bit from parent)
- tester failed
 
 starting munprotect_basic
 
@@ -462,23 +462,23 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ln
 usertests
-kill
-grep
-mkdir
-rm
-zombie
-cat
-wc
-ls
-tester
-README
 forktest
-sh
-echo
+cat
+zombie
+ln
+README
 stressfs
+mkdir
+kill
+echo
+rm
+wc
+sh
+grep
 init
+tester
+ls
 balloc: first 409 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -523,23 +523,23 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ln
 usertests
-kill
-grep
-mkdir
-rm
-zombie
-cat
-wc
-ls
-tester
-README
 forktest
-sh
-echo
+cat
+zombie
+ln
+README
 stressfs
+mkdir
+kill
+echo
+rm
+wc
+sh
+grep
 init
+tester
+ls
 balloc: first 410 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -558,13 +558,16 @@ init: starting sh
 $ tester
 tester
 write to a protected page
-ERROR: write to a protected page but not trigger page fault
-TEST FAILED
-
+pid 4 tester: trap 14 err 7 on cpu 0 eip 0x95 addr 0x4fff--kill proc
+write to a protected page
+pid 5 tester: trap 14 err 7 on cpu 0 eip 0x139 addr 0x3000--kill proc
+unexpected trap 14 from cpu 0 eip 102b23 (cr2=0x4244c8d)
+cpu0: panic: trap
+ 106119 105dc3
 
 test test_protect FAILED (0 of 8)
  (check whether mprotect and munprotect work properly)
- tester failed
+ xv6 kernel panic
 
 starting protect_error
 
@@ -584,23 +587,23 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-ln
 usertests
-kill
-grep
-mkdir
-rm
-zombie
-cat
-wc
-ls
-tester
-README
 forktest
-sh
-echo
+cat
+zombie
+ln
+README
 stressfs
+mkdir
+kill
+echo
+rm
+wc
+sh
+grep
 init
+tester
+ls
 balloc: first 408 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -619,6 +622,7 @@ init: starting sh
 $ tester
 tester
 TEST PASSED
+
 
 test protect_error PASSED (5 of 5)
  (check the error handling of mprotect and munprotect)
@@ -658,16 +662,15 @@ test build PASSED
 test mprotect_basic PASSED (5 of 5)
  (check whether mprotect work properly)
 
-test mprotect_fork FAILED (0 of 5)
+test mprotect_fork PASSED (5 of 5)
  (check whether fork inherit the write bit from parent)
- tester failed
 
 test munprotect_basic PASSED (5 of 5)
  (check whether munprotect work properly)
 
 test test_protect FAILED (0 of 8)
  (check whether mprotect and munprotect work properly)
- tester failed
+ xv6 kernel panic
 
 test protect_error PASSED (5 of 5)
  (check the error handling of mprotect and munprotect)
@@ -676,6 +679,6 @@ test allocator_a FAILED (0 of 5)
  (test the alternate allocator in part 2)
  make failed (error 2)
 
-Passed 4 of 7 tests.
-Overall 4 of 7
-Points 15 of 33
+Passed 5 of 7 tests.
+Overall 5 of 7
+Points 20 of 33
