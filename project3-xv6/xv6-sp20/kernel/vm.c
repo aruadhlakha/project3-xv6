@@ -301,16 +301,16 @@ copyuvm(pde_t *pgdir, uint sz)
 {
   pde_t *d;
   pte_t *pte;
-  uint pa, i;
+  uint pa,i;
   char *mem;
 
   if((d = setupkvm()) == 0)
     return 0;
 
-  for(i = 0; i < sz; i += PGSIZE){
+  for (i = 0; i < sz; i += PGSIZE){
     if((pte=walkpgdir(pgdir, (void*)i, 0)) == 0)
       panic("copyuvm: pte should exist");
-    if(!(*pte & PTE_P))
+    if(!(*pte & PTE_P ))
       panic("copyuvm: page not present");
     pa = PTE_ADDR(*pte);
     if((mem = kalloc()) == 0)
@@ -376,7 +376,8 @@ copyout(pde_t *pgdir, uint va, void *p, uint len)
 }
 
 int mprotect(void *addr, int len){
-	int va = (uint)addr;
+	int va;
+        va= (uint)addr;
 	if ((va%PGSIZE)!=0){
 		return -1;
 	}
@@ -400,7 +401,8 @@ int mprotect(void *addr, int len){
 }
 
 int munprotect (void *addr, int len){
-	int va = (uint)addr;
+	int va;
+	va= (uint)addr;
 	if ((va%PGSIZE)!=0) {
 		return -1;
 	}
